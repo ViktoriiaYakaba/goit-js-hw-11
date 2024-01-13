@@ -3,10 +3,12 @@ import "izitoast/dist/css/iziToast.min.css";
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
+
+const form = document.querySelector(".form");
 const gallery = document.querySelector(".gallery");
 const container = document.querySelector("div");
 const inputDate = document.querySelector("input");
-const btn = document.querySelector(".btn");
+
 
 
 const showLoader = () => {
@@ -15,12 +17,20 @@ const showLoader = () => {
   container.append(loader);
 };
 
-btn.addEventListener("submit", (event) => {
-   showLoader();
+const hidenLoader = () => {
+  const loader = document.querySelector('.loader');
+  if (loader) {
+    loader.remove();
+  }
+};
+
+form.addEventListener("submit", (event) => {
+    showLoader();
    gallery.innerHTML = "";
    event.preventDefault();
    const searchTerm = inputDate.value;
    searchImages(searchTerm);
+    hidenLoader();
 });
 
 function searchImages(searchTerm) {
@@ -38,13 +48,13 @@ function searchImages(searchTerm) {
     .then(data => {
         if (data.hits.length === 0) {
             iziToast.error({
-                title: 'Error',
-                message: 'Sorry, there are no images matching your search query. Please try again!',
-                position: 'topRight'
+                message: 'Sorry, there are no images matching <br>your search query. Please try again!</br>',
+                position: 'center',
+                transitionIn: "fadeInLeft",
             });
         } else {
        const markup = data.hits
-            .map(data => {
+           .map(data => {
             return `<li class="gallery-item"><a href="${data.webformatURL}">
           <img class="gallery-image" src="${data.largeImageURL}" alt="${data.tags}"></a>
           <p><b>Likes: </b>${data.likes}</p>
@@ -54,7 +64,7 @@ function searchImages(searchTerm) {
           </li>`;
             }).join('');
             
-            gallery.insertAdjacentHTML("beforeend", marcup);
+            gallery.insertAdjacentHTML("beforeend", markup);
         const lightbox = new SimpleLightbox('.gallery a', {
         captions: true,
         captionType: 'attr',
@@ -71,6 +81,10 @@ function searchImages(searchTerm) {
         }
          })
       
-    .catch((error) => console.log(error));
-}
+      .catch((error) => console.log(error));
+    
+};
+
+
+
 
