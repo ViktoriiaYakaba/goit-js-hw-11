@@ -17,7 +17,7 @@ const showLoader = () => {
   container.append(loader);
 };
 
-const hidenLoader = () => {
+const hideLoader = () => {
   const loader = document.querySelector('.loader');
   if (loader) {
     loader.remove();
@@ -25,36 +25,37 @@ const hidenLoader = () => {
 };
 
 form.addEventListener("submit", (event) => {
-    showLoader();
+  showLoader();
    gallery.innerHTML = "";
    event.preventDefault();
    const searchTerm = inputDate.value;
    searchImages(searchTerm);
-    hidenLoader();
+    
 });
 
 function searchImages(searchTerm) {
   const apiKey = '41764579-b97d65b31c0abd4efd9d4830e';
   const url = `https://pixabay.com/api/?key=${apiKey}&q=${searchTerm}&image_type=photo&orientation=horizontal&safesearch=true`;
-
   fetch(url)
-     .then(response => {
-            if (!response.ok) {
-                throw new Error(response.status);
-            } else {
-                return response.json();
-            }
-        })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(response.status);
+      } else {
+        return response.json();
+      }
+    })
     .then(data => {
-        if (data.hits.length === 0) {
-            iziToast.error({
-                message: 'Sorry, there are no images matching <br>your search query. Please try again!</br>',
-                position: 'center',
-                transitionIn: "fadeInLeft",
-            });
-        } else {
-       const markup = data.hits
-           .map(data => {
+      if (data.hits.length === 0) {
+        iziToast.error({
+          message: 'Sorry, there are no images matching <br>your search query. Please try again!</br>',
+          position: 'center',
+          transitionIn: "fadeInLeft",
+        });
+        hideLoader()
+      } else {
+        
+        const markup = data.hits
+          .map(data => {
             return `<li class="gallery-item"><a href="${data.webformatURL}">
           <img class="gallery-image" src="${data.largeImageURL}" alt="${data.tags}"></a>
           <p><b>Likes: </b>${data.likes}</p>
@@ -62,29 +63,26 @@ function searchImages(searchTerm) {
           <p><b>Comments: </b>${data.comments}</p>
           <p><b>Downloads: </b>${data.downloads}</p>
           </li>`;
-            }).join('');
-            
-            gallery.insertAdjacentHTML("beforeend", markup);
+          }).join('');
+        
+        gallery.insertAdjacentHTML("beforeend", markup);
         const lightbox = new SimpleLightbox('.gallery a', {
-        captions: true,
-        captionType: 'attr',
-        captionsData: 'alt',
-        captionPosition: 'bottom',
-        fadeSpeed: 150,
-        captionSelector: "img",
-        captionDelay: 250,
-       });
+          captions: true,
+          captionType: 'attr',
+          captionsData: 'alt',
+          captionPosition: 'bottom',
+          fadeSpeed: 150,
+          captionSelector: "img",
+          captionDelay: 250,
+        });
 
         lightbox.on('show.simplelightbox').refresh();
-                   
- 
-        }
-         })
-      
-      .catch((error) => console.log(error));
-    
+        hideLoader();
+      }
+    })
+    .catch((error) => console.log(error));
+   
 };
-
 
 
 
