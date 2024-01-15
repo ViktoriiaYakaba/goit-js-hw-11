@@ -16,6 +16,7 @@ div {
     margin-top: 36px;
 }
 
+
 input{
     width: 272px;
     height: 40px;
@@ -123,7 +124,6 @@ button:hover{
         transform: rotate(360deg)
     }
 }
-
 
 
 
